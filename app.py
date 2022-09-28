@@ -47,16 +47,16 @@ def add_wall(total_area=0, total_obst_area=0):
 
 def obst():
     if is_obst.get():  # TRUE
-        obstWidthLabel.grid(row=2, column=0, padx=5, pady=10)
-        obstWidth.grid(row=2, column=1, padx=10, pady=10)
-        obstMeterLabel.grid(row=2, column=2, pady=10)
-        multiplyLabel2.grid(row=2, column=3, padx=1, pady=10)
-        obstHeightLabel.grid(row=2, column=4, pady=10)
-        obstHeight.grid(row=2, column=5, padx=10, pady=10)
-        obstMeterLabel2.grid(row=2, column=6, pady=10)
-        addObstButton.grid(row=2, column=7, padx=15)
-        frameObstTotal.grid(row=3, column=1, columnspan=3, padx=10, pady=10)
-        frameObstList.grid(row=3, column=5, columnspan=3, padx=10, pady=10)
+        obstWidthLabel.grid(row=3, column=0, padx=5, pady=10)
+        obstWidth.grid(row=3, column=1, padx=10, pady=10)
+        obstMeterLabel.grid(row=3, column=2, pady=10)
+        multiplyLabel2.grid(row=3, column=3, padx=1, pady=10)
+        obstHeightLabel.grid(row=3, column=4, pady=10)
+        obstHeight.grid(row=3, column=5, padx=10, pady=10)
+        obstMeterLabel2.grid(row=3, column=6, pady=10)
+        addObstButton.grid(row=3, column=7, padx=15)
+        frameObstTotal.grid(row=4, column=1, columnspan=3, padx=10, pady=10)
+        frameObstList.grid(row=4, column=5, columnspan=3, padx=10, pady=10)
     else:  # FALSE
         obstWidthLabel.grid_forget()
         obstWidth.grid_forget()
@@ -99,14 +99,18 @@ def add_obst(total_area=0):
     label_area.pack()
 
 
-def paint_needed(total_area, total_paint=0):
+def paint_needed(total_area):
     for widget in frameD.winfo_children():  # destroys the current output frame contents.
         widget.destroy()
-    for wall in walls:
-        total_area += wall[1]
-    total_paint = total_area * 0.1
-    label_paint = tk.Label(frameD, text=f"Total paint needed:   {total_paint:0.2f} litres")
+    layers_of_paint = int(coats_of_paint.get())
+    total_paint = (total_area * 0.1) * layers_of_paint
+    if layers_of_paint > 1:
+        plural = "coats"
+    else:
+        plural = "coat"
+    label_paint = tk.Label(frameD, text=f"Total paint needed for {layers_of_paint} {plural}:   {total_paint:0.2f} litres\nTotal accounting for 10% wastage:   {total_paint*1.1:0.2f} litres")
     label_paint.pack()
+
 
 root = tk.Tk()
 root.title("Paint Calculator")
@@ -120,7 +124,7 @@ wallWidthLabel = Label(frameA, background="pink", text="Width:")
 wallWidthLabel.grid(row=0, column=0, padx=5, pady=10)
 
 wallWidth = tk.Text(frameA, width=20, height=1)
-wallWidth.grid(row=0, column=1, padx=10, pady=10)
+wallWidth.grid(row=0, column=1, pady=10)
 
 widthMeterLabel = Label(frameA, background="pink", text="m", justify="left")
 widthMeterLabel.grid(row=0, column=2, pady=10)
@@ -132,7 +136,7 @@ wallHeightLabel = Label(frameA, background="pink", text="Height:", justify="righ
 wallHeightLabel.grid(row=0, column=4, pady=10)
 
 wallHeight = tk.Text(frameA, width=20, height=1)
-wallHeight.grid(row=0, column=5, padx=10, pady=10)
+wallHeight.grid(row=0, column=5, pady=10)
 
 heightMeterLabel = Label(frameA, background="pink", text="m", justify="left")
 heightMeterLabel.grid(row=0, column=6, pady=10)
@@ -140,12 +144,18 @@ heightMeterLabel.grid(row=0, column=6, pady=10)
 addWallButton = tk.Button(frameA, text="Add wall", height=1, command=exception_check_wall)
 addWallButton.grid(row=0, column=7, padx=15)
 
+coats_label = Label(frameA, background="pink", text="How many coats?:   ", justify="left")
+coats_label.grid(row=1, column=0, columnspan=2, pady=10)
+
+coats_of_paint = tk.Spinbox(frameA, from_=1, to=99, width=3)
+coats_of_paint.grid(row=1, column=1, columnspan=4, padx=5, pady=10)
+
 obstructLabel = Label(frameA, background="pink", text="Are there any additional areas that don't need painting? (Doors, windows, etc.):")
-obstructLabel.grid(row=1, column=0, columnspan=6, padx=5, pady=10)
+obstructLabel.grid(row=2, column=0, columnspan=6, padx=5, pady=10)
 
 is_obst = BooleanVar()
 obstructCheck = Checkbutton(frameA, background="pink", activebackground="pink", command=obst, variable=is_obst, onvalue=True, offvalue=False)
-obstructCheck.grid(row=1, column=6, columnspan=1, padx=5, pady=10)
+obstructCheck.grid(row=2, column=6, columnspan=1, padx=5, pady=10)
 
 obstWidthLabel = Label(frameA, background="pink", text="Width:")
 
@@ -177,5 +187,7 @@ frameC.grid(row=1, column=1, rowspan=5, padx=10, pady=10)
 frameD = tk.Frame(root, width=81, height=21, bg="white")
 frameD.grid(row=2, column=0, padx=10, pady=10)
 
+#frameE = tk.Frame(root, width=81, height=21, bg="white")
+#frameE.grid(row=3, column=0, padx=10, pady=10)
 
 root.mainloop()
